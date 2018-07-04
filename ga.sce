@@ -8,22 +8,14 @@ function pop = geneticAlgorithm(it, size_pop, porc_c, porc_m)
         pop = gsort(pop,'lr','i')
         pop_best(i,:) = pop(1, :)
         
-        pop= selectPop(pop, size_pop) 
-        //disp("iteracoes")
-        //disp(pop)
+        pop= selectPop(pop, size_pop)
     end
-    
-    
-    disp("melhores")
-    disp(pop_best)
-    plot(pop_best)
-    //plotFunction(pop_best)
-    //surf(pop_best)
-    plot(pop_best(:,2), pop_best(:,3), pop_best(:,1))
+    plotFunction(pop_best, pop)
     
 endfunction
 
 function pop=popGenerate(size_pop)
+    rand('uniform')
     for i = 1:size_pop
         xy = int(modulo((rand(1,2)*10^4),500))
         x = xy(1,1)
@@ -83,14 +75,12 @@ function pop= mutaPop(pop, size_pop, porc_m)
         y1 = int(father1(1,3))
         p_x = int(modulo(rand()*100, length(x1)))+1
         p_y = int(modulo(rand()*100, length(y1)))+1
-        //disp(p_x)
-        //disp(x1)
-        //disp(bitget(x1, p_x))
+        
         bit_inv_x = 1 - bitget(x1, p_x)
         x_s = bitset(x1, p_x, bit_inv_x)
-        
+
         bit_inv_y = 1 - bitget(y1, p_y)
-        x_s = bitset(y1, p_y, bit_inv_y)        
+        y_s = bitset(y1, p_y, bit_inv_y)      
         
         z=-x_s.*sin(sqrt(abs(x_s)))-y_s.*sin(sqrt(abs(y_s)))
         r=100*(y_s-x_s.^2).^2+(1-x_s).^2; 
@@ -99,8 +89,6 @@ function pop= mutaPop(pop, size_pop, porc_m)
         size_pop_new = size_pop_new(1,1)+1
         
         pop(size_pop_new,:) = [w3,x_s, y_s]
-        //disp(pop)
-        //pop
     end
     
 endfunction
@@ -110,18 +98,14 @@ function pop_new=selectPop(pop, size_pop)
         p1 = int(modulo(rand()*100, size_pop))+1
         p2 = int(modulo(rand()*100, size_pop))+1
         if(p1 < p2) 
-            disp(p1)
-            disp(pop(p1, :))
             pop_new(i,:) = pop(p1, :)
-        else 
-            disp(p2)
-            disp(pop(p2, :))
+        else
             pop_new(i,:) = pop(p2, :)
         end         
     end    
 endfunction
 
-function plotFunction(pop_best)
+function plotFunction(pop_best, pop)
     [x,y]=meshgrid(-500:5:500,-500:5:500);
     z=-x.*sin(sqrt(abs(x)))-y.*sin(sqrt(abs(y)));
     x=x/250;
@@ -131,5 +115,6 @@ function plotFunction(pop_best)
     figure
     surf(x,y,w3)
     figure
-    scatter3(pop_best)
+    plot2d3('gnn',pop_best)
+    
 endfunction
