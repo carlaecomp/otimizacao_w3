@@ -11,13 +11,23 @@
 
 function pop = geneticAlgorithm(it, size_pop, porc_c, porc_m)
     
-    //ga= func
-    pop= popGenerate(size_pop)
-    pop= crossPop(pop, size_pop, porc_c)
-    pop= mutaPop(pop, size_pop, porc_m)
-    disp("Final")
-    pop
-//    pop= selectPop(pop) 
+    for i=1:it
+        pop= popGenerate(size_pop)
+        pop= crossPop(pop, size_pop, porc_c)
+        pop= mutaPop(pop, size_pop, porc_m)
+        
+        pop = gsort(pop,'lr','i')
+        pop_best(i,:) = pop(1, :)
+        
+        pop= selectPop(pop, size_pop) 
+        disp("iteracoes")
+        disp(pop)
+    end
+    
+    disp("melhores")
+    disp(pop_best)
+    plot(pop_best)
+    
 endfunction
 
 function pop=popGenerate(size_pop)
@@ -28,7 +38,7 @@ function pop=popGenerate(size_pop)
         z=-x.*sin(sqrt(abs(x)))-y.*sin(sqrt(abs(y)))
         r=100*(y-x.^2).^2+(1-x).^2; 
         w3 = r-z;
-        pop(i,:) = [xy, w3]
+        pop(i,:) = [ w3, xy]
     end
 endfunction
 
@@ -39,14 +49,14 @@ function pop= crossPop(pop, size_pop, porc_c)
     for i=1:it
         father1 = int(modulo(rand()*100, size_pop))+1
         father1 = pop(father1,:)
-        x1 = dec2bin(int(father1(1,1)))
-        y1 = dec2bin(int(father1(1,2)))
+        x1 = dec2bin(int(father1(1,2)))
+        y1 = dec2bin(int(father1(1,3)))
         
         
         father2 = int(modulo(rand()*100, size_pop))+1
         father2 = pop(father2,:)
-        x2 = dec2bin(int(father2(1,1)))
-        y2 = dec2bin(int(father2(1,2)))
+        x2 = dec2bin(int(father2(1,2)))
+        y2 = dec2bin(int(father2(1,3)))
         
         p_x = int(modulo(rand()*100, length(x1)))
         p_y = int(modulo(rand()*100, length(y1)))
@@ -63,7 +73,7 @@ function pop= crossPop(pop, size_pop, porc_c)
         size_pop_new = size(pop) 
         size_pop_new = size_pop_new(1,1)+1
         
-        pop(size_pop_new,:) = [x_s, y_s, w3]
+        pop(size_pop_new,:) = [w3, x_s, y_s]
     end
     
 endfunction
@@ -76,13 +86,13 @@ function pop= mutaPop(pop, size_pop, porc_m)
         father1 = int(modulo(rand()*100, size_pop))+1
         father1 = pop(father1,:)
         
-        x1 = int(father1(1,1))
-        y1 = int(father1(1,2))
+        x1 = int(father1(1,2))
+        y1 = int(father1(1,3))
         p_x = int(modulo(rand()*100, length(x1)))+1
         p_y = int(modulo(rand()*100, length(y1)))+1
-        disp(p_x)
-        disp(x1)
-        disp(bitget(x1, p_x))
+        //disp(p_x)
+        //disp(x1)
+        //disp(bitget(x1, p_x))
         bit_inv_x = 1 - bitget(x1, p_x)
         x_s = bitset(x1, p_x, bit_inv_x)
         
@@ -95,10 +105,26 @@ function pop= mutaPop(pop, size_pop, porc_m)
         size_pop_new = size(pop) 
         size_pop_new = size_pop_new(1,1)+1
         
-        pop(size_pop_new,:) = [x_s, y_s, w3]
-        disp(pop)
-        pop
+        pop(size_pop_new,:) = [w3,x_s, y_s]
+        //disp(pop)
+        //pop
     end
     
+endfunction
+
+function pop_new=selectPop(pop, size_pop)
+    for i=1:size_pop
+        p1 = int(modulo(rand()*100, size_pop))+1
+        p2 = int(modulo(rand()*100, size_pop))+1
+        if(p1 < p2) 
+            disp(p1)
+            disp(pop(p1, :))
+            pop_new(i,:) = pop(p1, :)
+        else 
+            disp(p2)
+            disp(pop(p2, :))
+            pop_new(i,:) = pop(p2, :)
+        end         
+    end    
 endfunction
 
