@@ -59,6 +59,20 @@ function pop= crossPop(pop, size_pop, porc_c)
         size_pop_new = size_pop_new(1,1)+1
         
         pop(size_pop_new,:) = [w3, x_s, y_s]
+        
+        x_s = strcat(part(x2, 1:p_x), part(x1, (p_x+1):length(x1)))
+        x_s = bin2dec(x_s)
+        
+        y_s = strcat(part(y2, 1:p_y), part(y1, (p_y+1):length(y1)))
+        y_s = bin2dec(y_s)
+        
+        z=-x_s.*sin(sqrt(abs(x_s)))-y_s.*sin(sqrt(abs(y_s)))
+        r=100*(y_s-x_s.^2).^2+(1-x_s).^2; 
+        w3 = r-z;
+        size_pop_new = size(pop) 
+        size_pop_new = size_pop_new(1,1)+1
+        
+        pop(size_pop_new,:) = [w3, x_s, y_s]
     end
     
 endfunction
@@ -107,9 +121,10 @@ endfunction
 
 function plotFunction(pop_best, pop)
     [x,y]=meshgrid(-500:5:500,-500:5:500);
-    z=-x.*sin(sqrt(abs(x)))-y.*sin(sqrt(abs(y)));
+    
     x=x/250;
     y=y/250;
+    z=-x.*sin(sqrt(abs(x)))-y.*sin(sqrt(abs(y)));
     r=100*(y-x.^2).^2+(1-x).^2; 
     w3 = r-z;
     figure
