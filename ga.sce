@@ -9,12 +9,14 @@
 
 //it = 100;
 
-function ga = geneticAlgorithm(func, it, size_pop, size_cromos, porc_c, porc_m)
+function pop = geneticAlgorithm(it, size_pop, porc_c, porc_m)
     
-    ga= func
-//    pop= popGenerate(size_pop, size_cromos)
-//    pop= crossPop(pop, size_cromos, porc_c)
-//    pop= mutaPop(pop, porc_m)
+    //ga= func
+    pop= popGenerate(size_pop)
+    pop= crossPop(pop, size_pop, porc_c)
+    pop= mutaPop(pop, size_pop, porc_m)
+    disp("Final")
+    pop
 //    pop= selectPop(pop) 
 endfunction
 
@@ -32,33 +34,71 @@ endfunction
 
 function pop= crossPop(pop, size_pop, porc_c)
     
-    father1 = int(modulo(rand()*100, size_pop))
-    father1 = pop(father1,:)
-    x1 = dec2bin(int(father1(1,1)))
-    y1 = dec2bin(int(father1(1,2)))
+    it = int(size_pop*(porc_c/100))
     
+    for i=1:it
+        father1 = int(modulo(rand()*100, size_pop))+1
+        father1 = pop(father1,:)
+        x1 = dec2bin(int(father1(1,1)))
+        y1 = dec2bin(int(father1(1,2)))
+        
+        
+        father2 = int(modulo(rand()*100, size_pop))+1
+        father2 = pop(father2,:)
+        x2 = dec2bin(int(father2(1,1)))
+        y2 = dec2bin(int(father2(1,2)))
+        
+        p_x = int(modulo(rand()*100, length(x1)))
+        p_y = int(modulo(rand()*100, length(y1)))
+        
+        x_s = strcat(part(x1, 1:p_x), part(x2, (p_x+1):length(x2)))
+        x_s = bin2dec(x_s)
+        
+        y_s = strcat(part(y1, 1:p_y), part(y2, (p_y+1):length(y2)))
+        y_s = bin2dec(y_s)
+        
+        z=-x_s.*sin(sqrt(abs(x_s)))-y_s.*sin(sqrt(abs(y_s)))
+        r=100*(y_s-x_s.^2).^2+(1-x_s).^2; 
+        w3 = r-z;
+        size_pop_new = size(pop) 
+        size_pop_new = size_pop_new(1,1)+1
+        
+        pop(size_pop_new,:) = [x_s, y_s, w3]
+    end
     
-    father2 = int(modulo(rand()*100, size_pop))
-    father2 = pop(father2,:)
-    x2 = dec2bin(int(father2(1,1)))
-    y2 = dec2bin(int(father2(1,2)))
+endfunction
+
+function pop= mutaPop(pop, size_pop, porc_m)
     
-    p_x = int(modulo(rand()*100, length(x1)))
-    p_y = int(modulo(rand()*100, length(y1)))
+    it = int(size_pop*(porc_m/100))
     
-    x_s = strcat(part(x1, 1:p_x), part(x2, (p_x+1):length(x2)))
-    x_s = bin2dec(x_s)
-    
-    y_s = strcat(part(y1, 1:p_y), part(y2, (p_y+1):length(y2)))
-    y_s = bin2dec(y_s)
-    
-    z=-x_s.*sin(sqrt(abs(x_s)))-y_s.*sin(sqrt(abs(y_s)))
-    r=100*(y_s-x_s.^2).^2+(1-x_s).^2; 
-    w3 = r-z;
-    size_pop_new = size(pop) 
-    size_pop_new = size_pop_new(1,1)
-    pop(size_pop_new,:) = [x_s, y_s, w3]       
-    
+    for i=1:it
+        father1 = int(modulo(rand()*100, size_pop))+1
+        father1 = pop(father1,:)
+        
+        x1 = int(father1(1,1))
+        y1 = int(father1(1,2))
+        p_x = int(modulo(rand()*100, length(x1)))+1
+        p_y = int(modulo(rand()*100, length(y1)))+1
+        disp(p_x)
+        disp(x1)
+        disp(bitget(x1, p_x))
+        bit_inv_x = 1 - bitget(x1, p_x)
+        x_s = bitset(x1, p_x, bit_inv_x)
+        
+        bit_inv_y = 1 - bitget(y1, p_y)
+        x_s = bitset(y1, p_y, bit_inv_y)        
+        
+        z=-x_s.*sin(sqrt(abs(x_s)))-y_s.*sin(sqrt(abs(y_s)))
+        r=100*(y_s-x_s.^2).^2+(1-x_s).^2; 
+        w3 = r-z;
+        size_pop_new = size(pop) 
+        size_pop_new = size_pop_new(1,1)+1
+        
+        pop(size_pop_new,:) = [x_s, y_s, w3]
+        disp(pop)
+        pop
+    end
     
 endfunction
 
