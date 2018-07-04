@@ -1,14 +1,3 @@
-//[x,y]=meshgrid(-500:5:500,-500:5:500);
-//
-//z=-x.*sin(sqrt(abs(x)))-y.*sin(sqrt(abs(y)));
-//x=x/500;
-//y=y/500;
-//r=100*(y-x.^2).^2+(1-x).^2; 
-//w3 = r-z;
-//surf(x,y,w3)
-
-//it = 100;
-
 function pop = geneticAlgorithm(it, size_pop, porc_c, porc_m)
     
     for i=1:it
@@ -20,19 +9,23 @@ function pop = geneticAlgorithm(it, size_pop, porc_c, porc_m)
         pop_best(i,:) = pop(1, :)
         
         pop= selectPop(pop, size_pop) 
-        disp("iteracoes")
-        disp(pop)
+        //disp("iteracoes")
+        //disp(pop)
     end
+    
     
     disp("melhores")
     disp(pop_best)
     plot(pop_best)
+    //plotFunction(pop_best)
+    //surf(pop_best)
+    plot(pop_best(:,2), pop_best(:,3), pop_best(:,1))
     
 endfunction
 
 function pop=popGenerate(size_pop)
     for i = 1:size_pop
-        xy = modulo((rand(1,2)*10^4),500)
+        xy = int(modulo((rand(1,2)*10^4),500))
         x = xy(1,1)
         y = xy(1,2)
         z=-x.*sin(sqrt(abs(x)))-y.*sin(sqrt(abs(y)))
@@ -128,3 +121,15 @@ function pop_new=selectPop(pop, size_pop)
     end    
 endfunction
 
+function plotFunction(pop_best)
+    [x,y]=meshgrid(-500:5:500,-500:5:500);
+    z=-x.*sin(sqrt(abs(x)))-y.*sin(sqrt(abs(y)));
+    x=x/250;
+    y=y/250;
+    r=100*(y-x.^2).^2+(1-x).^2; 
+    w3 = r-z;
+    figure
+    surf(x,y,w3)
+    figure
+    scatter3(pop_best)
+endfunction
