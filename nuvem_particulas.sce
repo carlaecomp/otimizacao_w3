@@ -1,5 +1,6 @@
-function np=np(it, m)
-    
+function np=np(it, m, c1, c2)
+    rand("normal")
+    tic()
     x   = modulo((rand(1,m)*10^4),500)
     y   = modulo((rand(1,m)*10^4),500)
     px  = modulo((rand(1,m)*10^4),500)
@@ -9,8 +10,6 @@ function np=np(it, m)
     vx  = modulo((rand(1,m)*10^4),500)
     vy  = modulo((rand(1,m)*10^4),500)
     w   = 0.5;
-    c1  = 1;
-    c2  = 1;
     
     for k=1:it
         for i=1:m
@@ -32,13 +31,37 @@ function np=np(it, m)
             end
             x(i+1) = x(i)+vx(i)
             y(i+1) = y(i)+vy(i)
+            if (x(i+1) > 500)
+                x(i+1) = 500
+                vx(i) = 0
+            end
+            if (y(i+1) > 500)
+                y(i+1) = 500
+                vy(i) = 0
+            end
         end
     end
+    figure
     plot(np)
+    disp(toc())
+    
 endfunction
 
 function w3=w3(x,y)
     z=-x.*sin(sqrt(abs(x)))-y.*sin(sqrt(abs(y)));
+    x =x/250;
+    y =y/250;
     r=100*(y-x.^2).^2+(1-x).^2; 
     w3 = r-z;
+endfunction
+
+function plotFunction()
+    [x,y]=meshgrid(-500:5:500,-500:5:500);
+    z=-x.*sin(sqrt(abs(x)))-y.*sin(sqrt(abs(y)));    
+    x=x/250;
+    y=y/250;
+    r=100*(y-x.^2).^2+(1-x).^2; 
+    w3 = r-z;
+    figure
+    surf(x*250, y*250,w3)
 endfunction
